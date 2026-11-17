@@ -1,0 +1,53 @@
+(() => {
+  const data = document.getElementById('kpiDefinitions');
+  const element = document.getElementById('kpiModal');
+  if (!data || !element || !window.bootstrap) return;
+  const definitions = JSON.parse(data.textContent);
+  const modal = new bootstrap.Modal(element);
+  let opener;
+  const set = (id, text) => { document.getElementById(id).textContent = text; };
+  document.querySelectorAll('.kpi-track-status, .kpi-change').forEach(label => {
+    label.addEventListener('click', () => label.closest('.kpi').querySelector('.kpi-open').click());
+  });
+  document.querySelectorAll('.kpi-open').forEach(button => button.addEventListener('click', () => {
+    const index = Number(button.dataset.kpiIndex);
+    const [label, , target, explanation] = definitions[index];
+    const parts = explanation.match(/^(.+?) Formula: (.+?) Target: (.+?) Action: (.+)$/s);
+    const value = document.getElementById(`k${index + 1}`).textContent;
+    const number = parseFloat(value);
+    const thresholds = [10, 4, 80, 10, 3];
+    const meetsTarget = index === 0 || index === 3 ? number <= thresholds[index] : number >= thresholds[index];
+    set('kpiModalTitle', label);
+    set('kpiModalValue', value);
+    set('kpiModalTarget', `Target: ${target}${index === 4 ? ' each semester · Overall SETE mean' : ''}`);
+    set('kpiModalStatus', window.kpiSourceData[index].suppressed ? 'Small-group data withheld' : meetsTarget ? 'Meets proposed target' : 'Needs review');
+    document.getElementById('kpiModalStatus').dataset.met = String(meetsTarget);
+    const comparison = window.kpiComparisons?.[index];
+    set('kpiModalChange', comparison?.change || '');
+    set('kpiModalPrevious', comparison ? `Previous: ${comparison.previousValue} · ${comparison.period} · Same cohort selection, demo data` : '');
+    const record = window.kpiSourceData[index];
+    const rows = document.getElementById('kpiSourceRows');
+    rows.replaceChildren();
+    record.rows.forEach(([label, value]) => {
+      const row = document.createElement('tr');
+      const measure = document.createElement('th');
+      measure.scope = 'row'; measure.textContent = label;
+      const amount = document.createElement('td');
+      amount.textContent = typeof value === 'number' ? value.toLocaleString('en-PH') : value;
+      row.append(measure, amount); rows.append(row);
+    });
+    set('kpiSourceCalculation', record.calculation);
+    set('kpiPreviousCalculation', record.previousCalculation);
+    set('kpiSourceNote', record.note || '');
+    document.getElementById('kpiSourceNote').hidden = !record.note;
+    element.querySelector('.kpi-previous-calculation').open = false;
+    set('kpiModalPurpose', parts ? parts[1] : explanation);
+    set('kpiModalFormula', parts ? parts[2] : 'See the indicator explanation.');
+    set('kpiModalAction', parts ? parts[4] : 'Review with authorized academic personnel.');
+    set('kpiModalFilters', getPortalFilterSummary());
+    renderKpiDrilldown(index);
+    opener = button;
+    modal.show();
+  }));
+  element.addEventListener('hidden.bs.modal', () => opener?.focus({ preventScroll: true }));
+})();

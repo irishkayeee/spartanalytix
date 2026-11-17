@@ -1,0 +1,66 @@
+.login-page { background: #fff; padding: 40px 24px; }
+.login-card { display: grid; grid-template-columns: 51% 49%; max-width: 980px; padding: 0; border-radius: 32px; overflow: hidden; box-shadow: 0 16px 50px #26364d26, 0 3px 12px #26364d12; }
+.login-shape-defs { position: absolute; pointer-events: none; }
+.login-wave-border { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+.login-brand-panel { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: linear-gradient(155deg, #6d2031 0%, #7d2638 48%, #a96570 100%); clip-path: url('#loginBrandWave'); }
+.login-brand-panel::before { content: ''; position: absolute; inset: 0; z-index: -1; background: url('../images/spartan_school.png') no-repeat 52% calc(100% - 40px); background-size: auto 66%; opacity: .6; filter: grayscale(1); mask-image: linear-gradient(to bottom, transparent 15%, #000 48%); }
+.login-bottom-waves { position: absolute; bottom: 0; left: 0; width: 100%; height: 145px; pointer-events: none; }
+.login-brand-panel { display: flex; align-items: flex-start; }
+.login-brand-copy { position: relative; width: 100%; padding: 48px 50px 260px 32px; }
+.login-school { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; padding-right: 18px; }
+.login-school .login-university { margin: 0; }
+.bsu-logo-placeholder { display: grid; align-content: center; justify-items: center; flex-shrink: 0; width: 56px; height: 56px; border: 2px dashed #ffffff80; border-radius: 50%; color: #fff; background: #ffffff0d; font-size: 16px; font-weight: 700; line-height: 1.2; }
+.bsu-logo-placeholder span { font-size: 10px; letter-spacing: 2px; margin-top: 3px; }
+.login-gold-rule { display: block; width: 42px; height: 5px; background: #D6B477; margin-bottom: 12px; }
+.login-university { font-size: 19px; font-weight: 600; line-height: 1.35; margin-bottom: 10px; }
+.login-brand-copy h2 { font-size: clamp(34px, 4vw, 46px); color: #fff; line-height: 1.05; margin-bottom: 14px; letter-spacing: -.6px; }
+.login-brand-copy h2 span { color: #e5c77e; }
+.login-brand-copy h2 { font-size: clamp(30px, 3.6vw, 39px); }
+.login-brand-copy h2 .login-title-first { color: #fff; white-space: nowrap; }
+.login-tagline { font-size: 16px; line-height: 1.5; font-style: italic; color: #fffdf6; }
+.login-form-panel { position: relative; left: -35px; padding: 32px 16px 24px 36px; align-self: center; min-width: 0; }
+.login-logo { width: 100%; max-width: 330px; margin: 0 auto 24px; }
+.login-card h1 { font-size: 32px; margin-bottom: 14px; letter-spacing: -.5px; text-align: center; }
+.login-intro { text-align: center; font-size: 14px; margin-bottom: 24px; }
+.login-input { position: relative; }
+.login-input .form-control { min-height: 44px; padding: 10px 44px 10px 48px; border-radius: 13px; border-color: #d8dbe0; font-size: 14px; color: #26364D; }
+.login-input .form-control:focus { border-color: #a56a76; box-shadow: 0 0 0 3px #7d263814; }
+.login-field-icon { position: absolute; width: 21px; height: 21px; left: 17px; top: 50%; transform: translateY(-50%); color: #657084; pointer-events: none; }
+.password-toggle { right: 8px; }
+.login-options { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 20px; font-size: 12px; }
+.login-options label { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.login-options input { width: 15px; height: 15px; accent-color: #7D2638; }
+.login-help-toggle { border: 0; background: none; color: #7D2638; padding: 0; cursor: pointer; }
+.login-help-toggle:hover { text-decoration: underline; }
+.login-help-text { padding: 12px; border-radius: 8px; background: #F7F4EF; line-height: 1.5; }
+.login-submit { display: flex; align-items: center; justify-content: center; gap: 18px; border-radius: 15px; padding: 12px; font-size: 16px; box-shadow: 0 3px 8px #7d263820; }
+.login-submit span { font-size: 23px; line-height: 18px; }
+.login-demo { position: relative; padding: 15px 20px 15px 28px; gap: 4px; margin-top: 18px; border-radius: 13px; }
+.login-demo::before { content: ''; position: absolute; left: 10px; top: 18px; bottom: 18px; width: 4px; border-radius: 4px; background: #D6B477; }
+.login-demo strong { display: flex; align-items: center; gap: 9px; margin-bottom: 3px; }
+.demo-bank-icon { width: 20px; height: 20px; }
+.login-demo code { font-family: inherit; font-weight: 700; }
+.login-demo small { font-size: 10px; margin-top: 4px; }
+.login-copyright { margin-top: 18px; }
+@media (max-width: 760px) {
+  .login-page { padding: 24px 16px; }
+  .login-card { grid-template-columns: 1fr; max-width: 470px; border-radius: 24px; }
+  .login-brand-panel { clip-path: none; }
+  .login-wave-border { display: none; }
+  .login-brand-copy { padding: 26px 30px; transform: none; }
+  .login-university { font-size: 16px; }
+  .login-brand-copy h2 { font-size: clamp(22px, 6vw, 28px); }
+  .login-tagline { font-size: 12px; margin-bottom: 0; }
+  .login-tagline br { display: none; }
+  .login-brand-panel::before { background-size: auto 100%; background-position: right bottom; opacity: .2; }
+  .login-brand-panel::after { display: none; }
+  .login-bottom-waves { display: none; }
+  .login-form-panel { left: 0; padding: 28px 26px; }
+  .login-card h1 { font-size: 27px; }
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .login-input .form-control { min-height: 46px; font-size: 16px; padding-right: 56px; }
+  .password-toggle { width: 44px; height: 44px; }
+  .login-options label, .login-help-toggle { min-height: 40px; display: inline-flex; align-items: center; }
+}
