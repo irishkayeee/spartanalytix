@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: spartanalytix
+    runtime: docker
+    plan: free
+    repo: https://github.com/irishkayeee/spartanalytix
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /login.php

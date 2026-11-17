@@ -1,0 +1,6 @@
+.git
+.publish-repo
+.env
+.env.*
+tests
+docs
