@@ -5,30 +5,31 @@ function isReportSuppressed(total, part) {
 
 function getAnalyticsCharts() {
   const total = getScopedPeriodCount(1000);
-  const courses = portalCourses.map(course => course.label);
-  const currentCounts = [78, 104, 65].map(base => getScopedPeriodCount(selection => base + Math.round(selection * 2.1)));
-  const previousCounts = [89, 118, 72].map(base => getScopedPeriodCount(selection => base + Math.round(selection * 2.1)));
-  const courseSuppressed = currentCounts.map((count, i) => isReportSuppressed(total, count) || isReportSuppressed(total, previousCounts[i]));
+  const periods = getAnalyticsPeriods();
+  const selectedYears = periods[2].entries.map(entry => Number(entry.academicYear.slice(3, 7)));
+  const semester = document.getElementById('sem').selectedIndex;
   const level = document.getElementById('yearLevel').value;
+  const courses = portalCourses.filter(course => selectedYears.includes(course.academicYear)
+    && (level === 'all' || course.yearLevel === Number(level)));
   const levels = level === 'all' ? [1, 2, 3, 4] : [Number(level)];
   const assessed = levels.map(year => getScopedPeriodCount(1000, String(year)));
   const atRisk = levels.map(year => getScopedPeriodCount(selection => 86 + Math.round(selection * 1.4), String(year)));
   const riskSuppressed = assessed.map((count, i) => isReportSuppressed(count, atRisk[i]));
-  const sections = bsitSections.filter(section => getSelectedDemoCohorts().some(cohort => cohort.id === section.id));
-  const scopedSection = (base, sectionId) => {
-    const year = document.getElementById('year');
-    const sem = document.getElementById('sem').selectedIndex;
-    const periods = year.value === 'all' ? [sem, sem + 1, sem + 2] : [year.selectedIndex + sem];
-    return periods.reduce((sum, period) => sum + getSelectedDemoCohorts().filter(cohort => cohort.id === sectionId).reduce((subtotal, cohort) => {
-      const count = typeof base === 'function' ? base(period) : base;
-      return subtotal + Math.floor(count * (cohort.index + 1) / 20) - Math.floor(count * cohort.index / 20);
-    }, 0), 0);
-  };
-  const heatmap = courses.flatMap((course, courseIndex) => sections.map(section => {
-    const enrolled = scopedSection(1000, section.id);
-    const failed = scopedSection(period => [78, 104, 65][courseIndex] + Math.round(period * 2.1), section.id);
-    return { course, section: section.id, failed, enrolled, rate: enrolled >= minimumReportGroup ? failed / enrolled * 100 : null };
-  }));
+  const cohorts = getSelectedDemoCohorts();
+  const sections = bsitSections.filter(section => cohorts.some(cohort => cohort.id === section.id));
+  const heatmap = courses.flatMap(course => {
+    const period = 2026 - course.academicYear + semester;
+    const failureCount = course.failureBase + Math.round(period * 2.1);
+    return sections.map(section => {
+      const sectionCohorts = cohorts.filter(cohort => cohort.id === section.id && cohort.year === course.yearLevel);
+      const enrolled = sectionCohorts.length * 50;
+      const failed = sectionCohorts.reduce((sum, cohort) =>
+        sum + Math.floor(failureCount * (cohort.index + 1) / 20) - Math.floor(failureCount * cohort.index / 20), 0);
+      return { course: course.label, section: section.id, failed, enrolled, rate: enrolled >= minimumReportGroup ? failed / enrolled * 100 : null };
+    });
+  });
+  const courseEnrollment = sections.length * 50;
+  const currentCounts = courses.map(course => heatmap.filter(cell => cell.course === course.label).reduce((sum, cell) => sum + cell.failed, 0));
   const riskTrend = [102, 94, 86].map(base => {
     const count = getScopedPeriodCount(period => base + Math.round(period * 1.4));
     return { count, total, rate: total >= minimumReportGroup ? count / total * 100 : null };
@@ -41,9 +42,14 @@ function getAnalyticsCharts() {
       const previous = getScopedParticipationCount(true, section.id);
       return { section: section.id, eligible, respondents, previous, rate: eligible >= minimumReportGroup ? respondents / eligible * 100 : null };
     }),
-    periods: getAnalyticsPeriods(),
-    periodLabels: getAnalyticsPeriods().map(period => period.label),
-    courses: { labels: courses.map((label, i) => label + (courseSuppressed[i] ? ' (suppressed)' : '')), current: currentCounts.map((count, i) => courseSuppressed[i] ? null : count / total * 100), previous: previousCounts.map((count, i) => courseSuppressed[i] ? null : count / total * 100), currentCounts, total, courseSuppressed },
+    periods,
+    periodLabels: periods.map(period => period.label),
+    courses: {
+      labels: courses.map(course => course.label),
+      current: currentCounts.map(count => courseEnrollment >= minimumReportGroup ? count / courseEnrollment * 100 : null),
+      currentCounts,
+      total: courseEnrollment,
+    },
     risk: { labels: levels.map((year, i) => `${['1st', '2nd', '3rd', '4th'][year - 1]} Year${riskSuppressed[i] ? ' (suppressed)' : ''}`), atRisk: atRisk.map((count, i) => riskSuppressed[i] ? null : count), notAtRisk: assessed.map((count, i) => riskSuppressed[i] ? null : count - atRisk[i]), riskSuppressed },
   };
 }
@@ -117,7 +123,7 @@ function renderAcademicAlerts(records, analytics) {
     row.append(term, count); counts.append(row);
   });
   const note = document.createElement('p'); note.className = 'privacy-report-note';
-  note.textContent = 'Demo data only. All selected sample counts are displayed, including small groups. Alerts never make automatic disciplinary decisions.';
+  note.textContent = 'Sample data only. All selected sample counts are displayed, including small groups. Alerts never make automatic disciplinary decisions.';
   container.append(note);
   renderAnalyticsWarning(analytics);
 }

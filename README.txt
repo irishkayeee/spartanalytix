@@ -11,7 +11,7 @@ assets/images/            Extracted reference logo
 assets/vendor/            Bootstrap 5.3.3 and Chart.js 4.4.8 (local copies)
 
 The original SPARTANalytix_Portal_With_Tooltips.html is preserved.
-All figures and filters retain the reference's illustrative demo behavior.
+All figures and filters retain the reference's illustrative behavior.
 Program Chair demonstration access uses PHP sessions. No university database is connected.
 
 Questionnaire review: docs/dashboard-evaluation-review.md

@@ -24,7 +24,7 @@
     document.getElementById('kpiModalStatus').dataset.met = String(meetsTarget);
     const comparison = window.kpiComparisons?.[index];
     set('kpiModalChange', comparison?.change || '');
-    set('kpiModalPrevious', comparison ? `Previous: ${comparison.previousValue} · ${comparison.period} · Same cohort selection, demo data` : '');
+    set('kpiModalPrevious', comparison ? `Previous: ${comparison.previousValue} · ${comparison.period} · Same cohort selection, sample data` : '');
     const record = window.kpiSourceData[index];
     const rows = document.getElementById('kpiSourceRows');
     rows.replaceChildren();

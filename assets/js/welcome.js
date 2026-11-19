@@ -6,7 +6,7 @@
   const buildSteps = () => {
     const shared = [
     ['#pageTitle', 'Academic Performance Overview', 'Review key indicators, SETE response rates by section, course-section failure hotspots, academic-risk trends, alerts, and report exports together in one view.'],
-    ['.filters', 'Choose what to review', 'This BSIT · CICS portal covers 1st to 4th year, with three Business Analytics sections and two Network Technology sections. Filter by academic year, semester, year level, specialization, and section. KPI source records and charts update together using demo data.'],
+    ['.filters', 'Choose what to review', 'This BSIT · CICS portal covers 1st to 4th year, with three Business Analytics sections and two Network Technology sections. Filter by academic year, semester, year level, specialization, and section. KPI source records and charts update together using sample data.'],
     ['#kpis', 'Check your five key indicators', 'Compare each value with its target. The arrow shows the change from the previous semester: pp means percentage points. Hover over a change for the previous period and value, or click a card for the source data, calculation, and target status.'],
     ];
     const panels = [

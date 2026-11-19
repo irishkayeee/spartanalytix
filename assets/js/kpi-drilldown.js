@@ -1,4 +1,4 @@
-// Demo drill-down records derived from the same integer totals as the KPIs.
+// Sample drill-down records derived from the same integer totals as the KPIs.
 // Evaluation items deliberately have no student identity or participation key.
 function getKpiDrilldown(index) {
   const source = window.kpiSourceData[index];
@@ -96,8 +96,8 @@ function getKpiDrilldown(index) {
     note: index === 1 ? 'Anonymous item identifiers have no link to student names or participation records. Overall evaluation items support the Average SETE KPI.'
       : index === 2 ? 'Participation status only. Evaluation ratings remain anonymous and are not linked to this roster.'
       : index === 4 ? 'Overall SETE mean improvement uses the same aggregate scores as the Average SETE KPI. All score sets are illustrative.'
-      : index === 3 ? `Subject: ${portalCourses[0].label}, verified from the BatStateU Lipa BSIT AY 2023–2024 curriculum. Student enrollments, references, and outcomes are demo examples, not official class records.`
-      : 'Student references, IDs, and flags are sample examples. R-01 is a demo flag, not an approved institutional risk policy.',
+      : index === 3 ? `Subject: ${portalCourses[0].label}, verified from the BatStateU Lipa BSIT AY 2023–2024 curriculum. Student enrollments, references, and outcomes are sample examples, not official class records.`
+      : 'Student references, IDs, and flags are sample examples. R-01 is a sample flag, not an approved institutional risk policy.',
   };
 }
 

@@ -13,7 +13,7 @@
           <select id="expandedInspector"></select>
           <p id="expandedInspectionDetail" aria-live="polite"></p>
         </div>
-        <p class="expanded-chart-note">Click a cell, bar, or point to inspect its details below. Use the dropdown to select data with the keyboard. All figures are illustrative demo data.</p>
+        <p class="expanded-chart-note">Click a cell, bar, or point to inspect its details below. Use the dropdown to select data with the keyboard. All figures are illustrative data.</p>
       </div>
       <div class="modal-footer"><button type="button" class="welcome-dismiss" data-bs-dismiss="modal">Close</button></div>
     </div>

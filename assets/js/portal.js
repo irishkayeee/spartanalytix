@@ -5,6 +5,14 @@ function activityBlue(value, min = 0, max = 100) {
   return 'rgb(' + light.map((channel, index) => Math.round(channel + (dark[index] - channel) * weight)).join(',') + ')';
 }
 let charts = [];
+Chart.Interaction.modes.heatmapCell = (chart, event) => {
+  if (!chart.isPointInArea(event)) return [];
+  const { x, y } = chart.scales;
+  const section = x.getLabelForValue(x.getValueForPixel(event.x));
+  const course = y.getLabelForValue(y.getValueForPixel(event.y));
+  const index = chart.data.datasets[0].data.findIndex(cell => cell.x === section && cell.y === course);
+  return index < 0 ? [] : [{ element: chart.getDatasetMeta(0).data[index], datasetIndex: 0, index }];
+};
 // Draw a full grid with values, so the heatmap remains readable without color.
 Chart.register({ id: 'courseHeatmap', beforeLayout(chart) {
   if (!chart.data.datasets[0]?.heatmap) return;
@@ -111,30 +119,42 @@ function render() {
   renderKpiValues(selection * .35); updateKpiComparisons(selection * .35);
   const analytics = getAnalyticsCharts();
   const participation = analytics.participation;
-  document.getElementById('dashboardPeriod').textContent = analytics.periods[2].label;
-  const respondents = participation.reduce((sum, item) => sum + item.respondents, 0);
-  const eligible = participation.reduce((sum, item) => sum + item.eligible, 0);
-  document.getElementById('dashboardParticipation').textContent = 'SETE: ' + respondents + ' / ' + eligible + (document.getElementById('year').value === 'all' ? ' evaluation opportunities across 3 years' : ' eligible evaluators');
+  const yearLevel = document.getElementById('yearLevel');
+  document.getElementById('heatmapPeriod').textContent =
+    analytics.periods[2].label + ' | ' + yearLevel.options[yearLevel.selectedIndex].textContent;
   setupAnalyticsLayout('setePanel');
   setupAnalyticsLayout('passPanel');
   setupAnalyticsLayout('standingPanel');
-  const inspectSete = inspectChart('seteChart', participation.map(item => ({ label: item.section, detail: item.section + ': ' + (item.rate === null ? 'no reportable rate.' : item.rate.toFixed(1) + '%. ' + (item.eligible - item.respondents) + ' of ' + item.eligible + ' students have not yet evaluated. ' + item.respondents + ' have completed their evaluation. Target: 100%.') })));
-  makeChart('seteChart', 'bar', participation.map(item => item.section), [
+  const inspectSete = inspectChart('seteChart', participation.map(item => ({ label: getSectionDisplayLabel(item.section), detail: getSectionDisplayLabel(item.section) + ': ' + (item.rate === null ? 'no reportable rate.' : item.rate.toFixed(1) + '%. ' + (item.eligible - item.respondents) + ' of ' + item.eligible + ' students have not yet evaluated. ' + item.respondents + ' have completed their evaluation. Target: 100%.') })));
+  makeChart('seteChart', 'bar', participation.map(item => getSectionDisplayLabel(item.section)), [
     { label: 'SETE Response Rate (%)', responseTarget: 100, data: participation.map(item => item.rate), backgroundColor: participation.map(item => item.rate === null ? '#F1F5F9' : 'rgb(' + [125, 38, 56].map((channel, i) => Math.round([219, 197, 201][i] + (channel - [219, 197, 201][i]) * Math.max(0, Math.min(1, (item.rate - 60) / 30)))).join(',') + ')') },
   ], { x: { beginAtZero: true, max: 100, title: { display: true, text: 'Response rate (%)' } }, y: { title: { display: true, text: 'Section' } } }, {
     indexAxis: 'y', onClick: (event, points) => { if (points.length) inspectSete(points[0].index); },
     onHover: (event, points) => { if (event.native?.target) event.native.target.style.cursor = points.length ? 'pointer' : 'default'; },
   });
   const cells = analytics.heatmap;
-  const inspectCourse = inspectChart('passChart', cells.map(cell => ({ label: cell.course + ' / ' + cell.section, detail: cell.course + ' / ' + cell.section + ': ' + (cell.rate === null ? 'no reportable rate.' : cell.rate.toFixed(1) + '%. ' + (cell.rate > 10 ? 'Warning: above the 10% threshold. Review course delivery and arrange targeted support.' : 'Within the 10% threshold. Continue monitoring.')) })));
-  makeChart('passChart', 'bubble', analytics.sections.map(section => section.id), [{
+  const inspectCourse = inspectChart('passChart', cells.map(cell => ({ label: cell.course + ' / ' + getSectionDisplayLabel(cell.section), detail: cell.course + ' / ' + getSectionDisplayLabel(cell.section) + ': ' + (cell.rate === null ? 'no reportable rate.' : cell.rate.toFixed(1) + '%. ' + (cell.rate > 10 ? 'Warning: above the 10% threshold. Review course delivery and arrange targeted support.' : 'Within the 10% threshold. Continue monitoring.')) })));
+  makeChart('passChart', 'bubble', analytics.sections.map(section => getSectionDisplayLabel(section.id)), [{
     label: 'Course-section failure rate (%)', heatmap: true, pointStyle: 'rect',
-    data: cells.map(cell => ({ ...cell, x: cell.section, y: cell.course, r: 18 })), backgroundColor: 'transparent', borderWidth: 0,
+    data: cells.map(cell => ({ ...cell, x: getSectionDisplayLabel(cell.section), y: cell.course, r: 18 })), backgroundColor: 'transparent', borderWidth: 0,
   }], {
-    x: { type: 'category', labels: analytics.sections.map(section => section.id), offset: true, grid: { display: false }, title: { display: true, text: 'Section' } },
+    x: { type: 'category', labels: analytics.sections.map(section => getSectionDisplayLabel(section.id)), offset: true, grid: { display: false }, title: { display: true, text: 'Section' } },
     y: { type: 'category', labels: analytics.courses.labels, offset: true, grid: { display: false }, title: { display: true, text: 'Course' } },
   }, {
-    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        mode: 'heatmapCell',
+        displayColors: false,
+        callbacks: {
+          title: ([{ raw }]) => raw.course,
+          label: ({ raw }) => [
+            'Section: ' + raw.x,
+            raw.rate === null ? 'No reportable data' : `Failure rate: ${raw.rate.toFixed(1)}% (${raw.failed} of ${raw.enrolled})`,
+          ],
+        },
+      },
+    },
     onHover: (event, points, chart) => {
       const area = chart.chartArea;
       if (event.native?.target) event.native.target.style.cursor = event.x >= area.left && event.x <= area.right && event.y >= area.top && event.y <= area.bottom ? 'pointer' : 'default';

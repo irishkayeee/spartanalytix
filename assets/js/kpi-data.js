@@ -43,7 +43,7 @@ function getKpiSourceData(delta) {
       rows: [['Students who failed the selected core/prerequisite course', failed], ['Students enrolled in that course', assessed]],
       calculation: `(${format(failed)} ÷ ${format(assessed)}) × 100 = ${rate(failed, assessed)}`,
       previousCalculation: `(${format(priorFailed)} ÷ ${format(assessed)}) × 100 = ${rate(priorFailed, assessed)}`,
-      note: `Course: ${portalCourses[0].label}. The subject name and code come from the BatStateU Lipa BSIT AY 2023–2024 curriculum. Enrollments and outcomes remain demo data. The rate uses only this course’s enrollment group.`,
+      note: `Course: ${portalCourses[0].label}. The subject name and code come from the BatStateU Lipa BSIT AY 2023–2024 curriculum. Enrollments and outcomes remain sample data. The rate uses only this course’s enrollment group.`,
     },
     {
       current: improvement, previous: (previousMean - getScopedPeriodCount(selection => 4040 - selection * 14) / assessed) / (getScopedPeriodCount(selection => 4040 - selection * 14) / assessed) * 100,

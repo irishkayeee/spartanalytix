@@ -9,6 +9,6 @@
   </div>
   <div class="welcome-banner-actions">
     <button type="button" class="quick-tour-button" id="startQuickTour">Quick tour <span aria-hidden="true">?</span></button>
-    <span class="welcome-banner-badge">Demo Account</span>
+    <span class="welcome-banner-badge">Program Chair</span>
   </div>
 </section>

@@ -7,7 +7,7 @@ const vm = require('node:vm');
 function dashboard() {
   const fields = {
     year: { value: 'AY 2026-2027', selectedIndex: 0, options: [{ textContent: 'AY 2026-2027' }] },
-    sem: { selectedIndex: 0 }, yearLevel: { value: 'all' },
+    sem: { selectedIndex: 0, addEventListener() {} }, yearLevel: { value: 'all', addEventListener() {} },
     specialization: { value: 'all', addEventListener() {} },
     section: { value: 'all', addEventListener() {} },
   };
@@ -18,6 +18,37 @@ function dashboard() {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../assets/js/kpi-drilldown.js'), 'utf8').split('\n(() => {')[0], context);
   return { fields, context, read: expression => vm.runInContext(expression, context) };
 }
+
+test('section codes reflect the selected year level and semester', () => {
+  const { fields, read } = dashboard();
+  fields.yearLevel.value = '1';
+  assert.equal(read("getSectionDisplayLabel('BA-1')"), '1101');
+  fields.sem.selectedIndex = 1;
+  assert.equal(read("getSectionDisplayLabel('BA-1')"), '1201');
+  fields.yearLevel.value = '2';
+  assert.equal(read("getSectionDisplayLabel('BA-2')"), '2202');
+});
+
+test('heatmap shows each academic year’s subjects and pools them without duplicating enrollments', () => {
+  const { fields, read } = dashboard();
+  const annualCharts = [0, 1, 2].map(index => {
+    Object.assign(fields.year, { selectedIndex: index, value: `AY ${2026 - index}-${2027 - index}` });
+    return read('getAnalyticsCharts()');
+  });
+  const annualLabels = annualCharts.flatMap(chart => Array.from(chart.courses.labels));
+  assert.equal(annualLabels.length, 12);
+  assert.equal(new Set(annualLabels).size, 12);
+
+  Object.assign(fields.year, { selectedIndex: 3, value: 'all' });
+  const pooled = read('getAnalyticsCharts()');
+  assert.deepEqual(Array.from(pooled.courses.labels), annualLabels);
+  assert.deepEqual(Array.from(pooled.heatmap), annualCharts.flatMap(chart => Array.from(chart.heatmap)));
+  for (const level of [1, 2, 3, 4]) {
+    fields.yearLevel.value = String(level);
+    const chart = read('getAnalyticsCharts()');
+    assert.deepEqual(Array.from(chart.courses.labels), annualLabels.filter((_, index) => index % 4 === level - 1));
+  }
+});
 
 test('520 valid filter combinations reconcile charts, KPIs and supporting records', () => {
   const { fields, context, read } = dashboard();

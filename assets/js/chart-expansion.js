@@ -58,7 +58,7 @@
         },
         onHover: source.config.options.onHover,
         scales: JSON.parse(JSON.stringify(source.config.options.scales || {})),
-        plugins: JSON.parse(JSON.stringify(source.config.options.plugins || {})),
+        plugins: { ...source.config.options.plugins },
       },
     });
   });

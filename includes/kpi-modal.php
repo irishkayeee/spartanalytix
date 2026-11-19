@@ -32,7 +32,7 @@
         </section>
         <section class="kpi-drilldown" id="kpiDrilldown" aria-labelledby="kpiBreakdownTitle">
           <h3 id="kpiBreakdownTitle">Breakdown by academic period, year, and section</h3>
-          <p class="kpi-demo-disclosure">Demo data only. Student references, IDs, faculty labels, enrollments, outcomes, and flags are sample records. Subject names and codes use the <a href="https://batstateu.edu.ph/wp-content/uploads/2025/03/BSIT-Curriculum-2023-2024.pdf" target="_blank" rel="noopener noreferrer">BatStateU Lipa BSIT AY 2023–2024 curriculum</a>.</p>
+          <p class="kpi-demo-disclosure">Sample data only. Student references, IDs, faculty labels, enrollments, outcomes, and flags are sample records. Subject names and codes use the <a href="https://batstateu.edu.ph/wp-content/uploads/2025/03/BSIT-Curriculum-2023-2024.pdf" target="_blank" rel="noopener noreferrer">BatStateU Lipa BSIT AY 2023–2024 curriculum</a>.</p>
           <div class="table-responsive drilldown-scroll"><table class="table table-sm drilldown-table" id="kpiGroupTable"></table></div>
           <div class="drilldown-pagination">
             <span id="kpiGroupCount" role="status" aria-live="polite"></span>
@@ -41,7 +41,7 @@
           <p class="kpi-source-label" id="kpiWithheldNotice"></p>
           <h3 id="kpiDrilldownTitle">Supporting records</h3>
           <p class="kpi-source-label" id="kpiDrilldownNote"></p>
-          <label class="visually-hidden" for="kpiRecordSearch">Search supporting demo records</label>
+          <label class="visually-hidden" for="kpiRecordSearch">Search supporting sample records</label>
           <input type="search" class="form-control drilldown-search" id="kpiRecordSearch" placeholder="Search reference, ID, section, year, or course…" autocomplete="off">
           <div class="table-responsive drilldown-scroll"><table class="table table-sm drilldown-table" id="kpiRecordTable"></table></div>
           <div class="drilldown-pagination">

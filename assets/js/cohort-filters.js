@@ -17,7 +17,7 @@ function getSelectedDemoCohorts(yearOverride) {
     && (section === 'all' || item.id === section));
 }
 
-// Distribute integer demo totals across 20 year/section cohorts. Any filtered
+// Distribute integer sample totals across 20 year/section cohorts. Any filtered
 // subset adds back to the same overall source count without rounding drift.
 function getScopedDemoCount(total, yearOverride) {
   return getSelectedDemoCohorts(yearOverride).reduce((sum, cohort) =>
@@ -62,14 +62,41 @@ function getScopedStanding() {
   return { labels: levels.map(year => ['1st Year', '2nd Year', '3rd Year', '4th Year'][year - 1]), good, support: good.map(value => 100 - value) };
 }
 
-document.getElementById('specialization').addEventListener('change', () => {
+const specializationFilter = document.getElementById('specialization');
+const yearLevelFilter = document.getElementById('yearLevel');
+
+function getSectionDisplayLabel(sectionId) {
+  const sectionNumber = bsitSections.findIndex(item => item.id === sectionId) + 1;
+  const yearLevel = yearLevelFilter.value;
+  if (sectionNumber === 0) return sectionId;
+  if (yearLevel === 'all') return 'Section ' + sectionNumber;
+  const semester = document.getElementById('sem').selectedIndex + 1;
+  return yearLevel + semester + String(sectionNumber).padStart(2, '0');
+}
+
+function updateSectionOptions() {
   const section = document.getElementById('section');
   const previous = section.value;
-  const track = document.getElementById('specialization').value;
+  const track = specializationFilter.value;
   section.replaceChildren(new Option('All Sections', 'all'));
-  bsitSections.filter(item => track === 'all' || item.specialization === track)
-    .forEach(item => section.add(new Option(item.label, item.id)));
+  bsitSections.forEach(item => {
+    if (track === 'all' || item.specialization === track) {
+      section.add(new Option(getSectionDisplayLabel(item.id), item.id));
+    }
+  });
   if (Array.from(section.options).some(option => option.value === previous)) section.value = previous;
+}
+
+specializationFilter.addEventListener('change', updateSectionOptions);
+document.getElementById('sem').addEventListener('change', updateSectionOptions);
+yearLevelFilter.addEventListener('change', () => {
+  const canSelectTrack = ['3', '4'].includes(yearLevelFilter.value);
+  specializationFilter.disabled = !canSelectTrack;
+  if (!canSelectTrack && specializationFilter.value !== 'all') {
+    specializationFilter.value = 'all';
+    document.getElementById('section').value = 'all';
+  }
+  updateSectionOptions();
 });
 
 // Section-specific sample participation, shared by charts, KPIs and records.

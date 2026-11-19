@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button class="login-submit" type="submit">Log in</button>
     </form>
     <div class="login-demo">
-      <strong><svg class="demo-bank-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m2 8 10-6 10 6H2Zm2 12h16M2 22h20M6 10v8m6-8v8m6-8v8"/></svg> Demo Account</strong>
+      <strong><svg class="demo-bank-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m2 8 10-6 10 6H2Zm2 12h16M2 22h20M6 10v8m6-8v8m6-8v8"/></svg> Account Access</strong>
       <span>Username: <code>programchair</code></span>
       <span>Password: <code>Spartan2026!</code></span>
       <small>For demonstration only. No database is connected.</small>
